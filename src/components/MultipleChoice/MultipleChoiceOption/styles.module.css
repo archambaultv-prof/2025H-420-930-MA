@@ -1,0 +1,28 @@
+/* Each option is laid out as a flex row */
+.multipleChoiceOption {
+  display: flex;
+  align-items: flex-start; /* ensures the radio button stays at the top */
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+/* Highlight an option on hover */
+.multipleChoiceOption:hover {
+  background-color: var(--ifm-color-secondary-lighter);
+  cursor: pointer;
+}
+
+.multipleChoiceOption input[type="radio"] {
+  margin-top: 0.5rem; 
+  margin-right: 0.5rem; 
+}
+
+.multipleChoiceLabel {
+  flex: 1;
+  background-color: transparent;
+}
+
+.multipleChoiceLabel:hover {
+  cursor: pointer;
+}
