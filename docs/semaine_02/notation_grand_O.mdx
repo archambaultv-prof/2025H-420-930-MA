@@ -1,0 +1,264 @@
+---
+sidebar_position: 2
+sidebar_label: Notation grand O
+description: Notation grand O et structures de contrôle
+---
+
+# Notation grand O et son lien avec les structures de contrôle
+
+La notation **grand O** (ou notation Big O) est un moyen standard en
+informatique pour décrire la complexité d’un algorithme, c’est-à-dire comment
+sa durée d’exécution (ou son coût en mémoire) évolue lorsque la taille de
+l’entrée croît.
+
+## Définition de la notation grand O
+
+### Intuition
+
+- On cherche à savoir, a priori, comment le temps d’exécution (ou l’espace
+  mémoire) d’un algorithme grandit lorsque la taille de l’entrée, souvent notée
+  **n**, augmente.
+- On ne s’intéresse pas aux constantes multiplicatives. Un algorithme qui
+  prend 3n opérations et un autre qui en prend 5n sont tous deux en O(n).
+- L’idée est de caractériser l’algorithme « à la louche » : est-ce qu’il reste
+  constant, croît linéairement, quadratiquement, exponentiellement, etc. ?
+
+### Définition formelle
+
+On dit qu’une fonction f(n) est en O(g(n)) si, pour des constantes positives c
+et n₀, on a pour tout n ≥ n₀ :
+
+```
+|f(n)| ≤ c · |g(n)|
+```
+
+- Ici, **f(n)** représente le nombre d’opérations (ou le coût) d’un algorithme
+  en fonction de la taille n.
+- **g(n)** est une fonction de référence (par exemple n, n², log n, etc.).
+- On ignore les détails pour n « petits » (d’où l’existence de n₀) et on retire
+  les coefficients multiplicatifs.
+
+## Principaux ordres de grandeur
+
+| Complexité    | Expression (g(n)) | Interprétation                             |
+|---------------|-------------------|--------------------------------------------|
+| O(1)          | 1                 | Temps constant (quelle que soit la valeur de n).         |
+| O(log n)      | log n             | Croissance logarithmique (ex. recherche binaire). |
+| O(n)          | n                 | Croissance linéaire (une boucle simple).   |
+| O(n log n)    | n log n           | Souvent lié à des algorithmes de tri optimisés (merge sort, quicksort en moyenne). |
+| O(n²)         | n²                | Croissance quadratique (double boucle imbriquée).  |
+| O(n³)         | n³                | Triple boucle imbriquée, etc.              |
+| O(2ⁿ)         | 2ⁿ                | Croissance exponentielle (ex. exploration exhaustive). |
+| O(n!)         | n!                | Croissance factorielle (très coûteux).     |
+
+
+## Impact des structures de contrôle sur la complexité
+
+En Python (ou pseudo-code Python), les structures de contrôle principales sont :
+1. Les **instructions conditionnelles** (`if`, `elif`, `else`)
+2. Les **boucles simples** (`for`, `while`)
+3. Les **boucles imbriquées** (une boucle à l’intérieur d’une autre)
+4. Les **structures récursives** (fonctions s’appelant elles-mêmes) — nous
+   n’aborderons pas la récursion en détail ici, mais le principe est similaire
+   à une boucle.
+
+### Instruction conditionnelle (O(1))
+
+```python
+def exemple_condition(liste):
+    if len(liste) % 2 == 0:
+        # Opération A
+        msg = "Liste de taille paire"
+    else:
+        # Opération B
+        msg = "Liste de taille impaire"
+    return msg
+```
+
+* **Analyse** : la condition `len(liste) % 2 == 0` se calcule en temps constant, puis on
+  effectue soit une opération, soit une autre. Il n’y a pas de boucle.
+* **Complexité** : O(1) — le temps d’exécution ne dépend pas de la taille de la liste.
+
+:::info
+
+**Conclusion** : toute séquence d’instructions sans boucle explicite (et sans
+appel à une fonction coûteuse) a typiquement une complexité constante O(1).
+
+:::
+
+### Boucle simple (O(n))
+
+```python
+def somme_liste(liste):
+    total = 0
+    for x in liste:
+        total += x
+    return total
+```
+
+* **Analyse** :
+
+  * La boucle `for x in liste:` parcourt chaque élément de la liste exactement une fois.
+  * Pour chaque itération, on fait une addition et une affectation.
+  * Si la liste contient n éléments, on effectue environ n opérations élémentaires.
+
+* **Complexité** : O(n).
+
+  * Le nombre d’opérations croît linéairement avec la taille `n = len(liste)`.
+
+> **Remarque** : une boucle `while i < n:` qui incrémente `i` de 1 à chaque itération a la même complexité O(n).
+
+### Boucles imbriquées (O(n²), O(n · m), etc.)
+
+#### Deux boucles imbriquées sur la même taille
+
+```python
+def somme_paire(liste):
+    total = 0
+    n = len(liste)
+    for i in range(n):
+        for j in range(n):
+            if (liste[i] + liste[j]) % 2 == 0:
+                total += 1
+    return total
+```
+
+* **Analyse** :
+
+  * La boucle extérieure (`for i in range(n)`) s’exécute n fois.
+  * Pour chaque itération de la boucle extérieure, la boucle intérieure (`for j in range(n)`) s’exécute également n fois.
+  * À chaque double-indice (i, j), on effectue une condition et éventuellement une addition.
+
+* **Complexité** : O(n × n) = O(n²).
+
+> **Conclusion** : deux boucles imbriquées itérant chacune de 1 à n donnent une complexité quadratique O(n²).
+
+#### Deux boucles imbriquées sur tailles différentes
+
+```python
+def compare_listes(liste1, liste2):
+    count = 0
+    n = len(liste1)
+    m = len(liste2)
+    for elem1 in liste1:
+        for elem2 in liste2:
+            if elem1 == elem2:
+                count += 1
+    return count
+```
+
+* **Analyse** :
+
+  * La boucle extérieure fait n itérations (taille de `liste1`).
+  * La boucle intérieure fait m itérations (taille de `liste2`).
+  * Le test `if elem1 == elem2` se fait n × m fois.
+
+* **Complexité** : O(n × m).
+
+  * Si n ≈ m, on parle souvent d’O(n²), mais si n et m sont très différents, on précise O(n m).
+
+> **Exemple** : si `liste1` a 100 éléments et `liste2` en a 1 000, on effectue 100 × 1 000 = 100 000 tests.
+
+### Boucle avec modification dynamique de la structure parcourue
+
+```python
+def retirer_pairs(liste):
+    i = 0
+    while i < len(liste):
+        if liste[i] % 2 == 0:
+            liste.pop(i)  # suppression d’un élément
+        else:
+            i += 1
+    return liste
+```
+
+* **Analyse** :
+
+  * À chaque itération, on teste si `liste[i]` est pair.
+  * Si oui, on supprime un élément au milieu de la liste (opération O(n) en Python, car tous les éléments qui suivent sont décalés).
+  * Le pire cas (liste entièrement paire) : on effectue n suppressions successives, et à chaque suppression, le coût est O(n), O(n − 1), O(n − 2), … → O(n²) en tout.
+
+* **Complexité** : O(n²) dans le pire cas, même si une seule boucle `while` est visible.
+
+  * Ce cas illustre que l’usage d’une opération coûteuse dans une boucle (ici `pop(i)`) peut augmenter l’ordre de grandeur.
+
+### Complexité exponentielle et factorielle
+
+Les complexités exponentielle O(2ⁿ) et factorielle O(n!) sont souvent liées à
+des algorithmes de recherche exhaustive ou de génération de
+combinaisons/permutations. Par exemple, un algorithme qui explore toutes les
+sous-séquences d’un ensemble de n éléments aura une complexité O(2ⁿ) car il y a
+2ⁿ sous-ensembles possibles (chaque élément peut être inclus ou non).
+
+Une autre situation courante est une fonction doublement récursive comme la
+fonction Fibonacci :
+
+```python
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+```
+
+La complexité de cette fonction est O(2ⁿ) car chaque appel à `fibonacci(n)`
+génère deux appels récursifs pour `fibonacci(n - 1)` et `fibonacci(n - 2)`,
+entraînant une croissance exponentielle du nombre d'appels.
+
+## Recherche linéaire vs recherche binaire
+
+### Recherche linéaire (O(n))
+
+```python
+def recherche_lineaire(liste, cible):
+    for x in liste:
+        if x == cible:
+            return True
+    return False
+```
+
+* **Boucle simple** : on compare chaque élément jusqu’à trouver `cible` ou terminer la liste.
+* Pire cas : la cible n’est pas dans la liste → on parcourt n éléments → O(n).
+
+### Recherche binaire (O(log n), liste triée)
+
+```python
+def recherche_binaire(liste_triee, cible):
+    gauche = 0
+    droite = len(liste_triee) - 1
+    while gauche <= droite:
+        milieu = (gauche + droite) // 2
+        if liste_triee[milieu] == cible:
+            return True
+        elif liste_triee[milieu] < cible:
+            gauche = milieu + 1
+        else:
+            droite = milieu - 1
+    return False
+```
+
+* **Analyse** :
+
+  * À chaque itération, on divise l’intervalle de recherche par 2.
+  * On effectue au plus log₂(n) comparaisons.
+
+* **Complexité** : O(log n).
+
+  * Mise en avant de la structure de contrôle (`while`) et de la division de l’espace de recherche.
+
+## Récapitulatif
+
+* **O(1)** : instruction simple ou suite d’instructions sans boucle dépendant
+  de n (ex. accès direct, `if` unique).
+* **O(n)** : boucle simple sur n éléments, éventuellement accompagnée d’une
+  instruction conditionnelle ou d’une petite boucle bornée par une constante.
+* **O(n²)** : deux boucles imbriquées parcourant toutes deux un ensemble de
+  taille n, ou boucle + suppression/lecture dans une liste non optimisée.
+* **O(n × m)** : deux boucles imbriquées parcourant deux structures de tailles
+  différentes.
+* **Importance des structures de contrôle** :
+
+  * Les boucles (`for`, `while`) sont le principal facteur d’augmentation de la complexité.
+  * Une condition isolée (`if … else …`) reste en O(1).
+  * Une opération coûteuse (par exemple suppression dans une liste) à l’intérieur
+    d’une boucle peut augmenter la complexité (parfois jusqu’à O(n²) même si
+    une seule boucle est visible).
