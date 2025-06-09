@@ -217,7 +217,9 @@ class SinglyLinkedList:
 
 | Opération                        | Accès aléatoire | Insertion tête | Insertion fin | Insertion milieu | Suppression tête | Suppression fin | Suppression milieu | Mémoire         |
 |----------------------------------|-----------------|----------------|---------------|------------------|------------------|-----------------|--------------------|-----------------|
-| **Liste simplement chaînée**     | O(n)            | O(1)           | O(n)          | O(n)             | O(1)             | O(n)            | O(n)               | Pointeur simple |
+| **Liste simplement chaînée**     | O(n)            | O(1)           | O(n)\*        | O(n)             | O(1)             | O(n)\*          | O(n)               | Pointeur simple |
+
+\*Insertion/suppression en fin est O(1) **si on possède déjà le dernier nœud** (par exemple si on maintient un pointeur `tail`), sinon O(n) car il faut parcourir la liste.
 
 ### Quand l’utiliser ?
 
@@ -277,7 +279,10 @@ class DoublyLinkedList:
 
 | Opération                        | Accès aléatoire | Insertion tête | Insertion fin | Insertion milieu | Suppression tête | Suppression fin | Suppression milieu | Mémoire          |
 |----------------------------------|-----------------|----------------|---------------|------------------|------------------|-----------------|--------------------|------------------|
-| **Liste doublement chaînée**     | O(n)            | O(1)           | O(1)          | O(n)             | O(1)             | O(1)            | O(1)               | Pointeur double  |
+| **Liste doublement chaînée**     | O(n)            | O(1)           | O(1)\*        | O(1)\*\*         | O(1)             | O(1)\*          | O(1)\*\*           | Pointeur double  |
+
+\*Insertion/suppression en tête ou en fin est O(1) si on possède déjà le nœud (par exemple via un pointeur `head` ou `tail`).
+\*\*Insertion/suppression en milieu est O(1) **si on possède déjà le nœud** à insérer ou à supprimer (sinon O(n) pour le trouver).
 
 ### Quand l’utiliser ?
 
@@ -293,10 +298,11 @@ class DoublyLinkedList:
 | ----------------- | --------------- | -------------- | ------------- | ----------------- | ---------------- | --------------- | ------------------ | ---------------- | ---------------------------------- |
 | **Tableau statique** (Array)         | O(1)            | O(n)           | O(n)            | O(n)              | O(n)               | O(n)            | O(n)               | Faible           | Tableaux C, buffers fixes          |
 | **Tableau dynamique** (ArrayList)     | O(1)            | O(n)           | O(1)*           | O(n)              | O(n)               | O(1)*           | O(n)               | Moyen (+ redim.) | Listes générales, pile, file       |
-| **Liste simplement chaînée** (Singly Linked) | O(n)            | O(1)           | O(n)            | O(n)              | O(1)               | O(n)            | O(n)               | Pointeur simple  | File FIFO, pile LIFO (stack)       |
-| **Liste doublement chaînée** (Doubly Linked) | O(n)            | O(1)           | O(1)            | O(n)              | O(1)               | O(1)            | O(1)               | Pointeur double  | Déque, navigation bidirectionnelle |
+| **Liste simplement chaînée** (Singly Linked) | O(n)            | O(1)           | O(n)\*           | O(n)              | O(1)               | O(n)\*           | O(n)               | Pointeur simple  | File FIFO, pile LIFO (stack)       |
+| **Liste doublement chaînée** (Doubly Linked) | O(n)            | O(1)           | O(1)\*           | O(1)\*\*           | O(1)               | O(1)\*           | O(1)\*\*           | Pointeur double  | Déque, navigation bidirectionnelle |
 
-*Insertion fin et suppression fin sont O(1) en moyenne (amorti), mais peuvent être O(n) lors d'un redimensionnement.
+\*Insertion/suppression en fin est O(1) pour les listes chaînées si on possède déjà le dernier nœud, sinon O(n).
+\*\*Insertion/suppression en milieu est O(1) pour les listes doublement chaînées si on possède déjà le nœud, sinon O(n).
 
 **En résumé :**
 
