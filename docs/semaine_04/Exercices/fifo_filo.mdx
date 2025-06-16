@@ -1,0 +1,131 @@
+---
+sidebar_position: 1
+sidebar_label: First-In First-Out, First-In Last-Out, Deque
+description: First-In First-Out, First-In Last-Out, Deque
+---
+
+# First-In First-Out, First-In Last-Out, Deque
+
+## 🎯 Objectifs pédagogiques
+
+- Comprendre les **principes fondamentaux** des structures FIFO, FILO et Deque.
+- Implémenter ces structures avec des **classes Python**.
+- Identifier et comparer leurs **cas d’usage typiques**.
+
+## 📚 Introduction aux structures de données
+
+### 🟦 FIFO : *First-In First-Out* (File)
+
+**Définition** : La structure FIFO fonctionne comme une file d’attente : le
+**premier élément ajouté est le premier à sortir**.
+
+**Caractéristiques :**
+- Insertion à la fin (`enqueue`)
+- Suppression au début (`dequeue`)
+- Très utilisée dans les files d’attente (clients, tâches à exécuter, imprimantes, serveurs).
+
+**Image mentale** :  
+> Vous faites la file pour un café. La personne devant vous est servie avant vous.
+
+**Références utiles :**
+- [Wikipedia - FIFO (FR)](https://fr.wikipedia.org/wiki/File_(structure_de_donn%C3%A9es))
+- [Real Python – Queues (EN)](https://realpython.com/queue-in-python/)
+
+
+### 🟥 FILO : *First-In Last-Out* (Pile)
+
+**Définition** : La structure FILO fonctionne comme une pile d’objets : le
+**dernier élément ajouté est le premier à sortir**. Aussi appelée LIFO (Last-In
+First-Out).
+
+**Caractéristiques :**
+- Insertion et suppression au même endroit (`push` / `pop`)
+- Typique pour les systèmes d’annulation (undo), l’évaluation récursive, le retour en arrière.
+
+**Image mentale** :  
+> Vous empilez des livres. Vous reprenez toujours celui du dessus.
+
+**Références utiles :**
+- [Wikipedia - LIFO (FR)](https://fr.wikipedia.org/wiki/LIFO)
+- [Real Python – Queues (EN)](https://realpython.com/queue-in-python/)
+
+### 🟨 Deque : *Double-Ended Queue*
+
+**Définition** : Une deque permet d’**ajouter et de retirer des éléments aux deux extrémités**.
+
+**Caractéristiques :**
+- Très flexible : combine les comportements de pile **et** de file.
+- Utile pour des algorithmes de type fenêtre glissante, caches, historique de navigation, etc.
+
+**Image mentale** :  
+> Une file où l’on peut entrer et sortir par les deux côtés.
+
+**Références utiles :**
+- [Real Python – Queues (EN)](https://realpython.com/queue-in-python/)
+
+## 🧩 Partie 1 — En solo (environ 2h00)
+
+### 🔧 Étape 1 : Implémentation
+
+Implémentez les structures suivantes en utilisant **uniquement des listes Python** et des classes :
+
+#### FIFO (File)
+
+Méthodes attendues :
+- `enqueue(element)`
+- `dequeue()`
+- `is_empty()`
+- `peek()`
+
+#### FILO (Pile)
+
+Méthodes attendues :
+- `push(element)`
+- `pop()`
+- `is_empty()`
+- `peek()`
+
+#### Deque
+
+Méthodes attendues :
+- `append_left(element)`
+- `append_right(element)`
+- `pop_left()`
+- `pop_right()`
+- `peek_left()`
+- `peek_right()`
+- `is_empty()`
+
+👉 **Règle importante** : N’utilisez **pas** `collections.deque`, `queue.Queue` ou `queue.LifoQueue` et évitez `list.insert(0, ...)`
+
+
+### 🧪 Étape 2 : Écriture de tests
+
+Créez un fichier `test_structures.py` contenant des **tests unitaires simples** pour valider le comportement attendu des trois structures :
+
+- Insertion, suppression, lecture sans suppression
+- Gestion des cas d’erreur (ex. structure vide)
+
+
+### 🔎 Étape 3 : Cas d’usage concrets
+
+Pour chaque structure, listez dans un fichier markdown les différents cas d’usage.
+
+
+## 🤝 Partie 2 — En équipe (environ 1h00)
+
+### 🗣 Étape 4 : Restitution & discussion
+
+En équipe, discutez des implémentations et des cas d’usage :
+
+- Vos implémentations sont-elles similaires et aussi efficaces ?
+- Avez-vous rencontré des difficultés particulières ?
+- Quels sont les avantages et inconvénients de chaque structure ?
+- Dans quels scénarios utiliseriez-vous l’une plutôt que l’autre ?
+
+
+## 💡 Pour aller plus loin (facultatif)
+
+* Comparez vos classes à `queue.Queue`, `queue.LifoQueue` ou `collections.deque`.
+* Étendez votre Deque pour qu’elle ait une taille maximale.
+
