@@ -1,0 +1,57 @@
+---
+sidebar_position: 1
+sidebar_label: Table de hachage
+description: Table de hachage
+---
+
+# 🗃️ Table de hachage
+
+## 🎯 Objectifs pédagogiques
+
+- Comprendre le fonctionnement d'une table de hachage.
+- Savoir implémenter une table de hachage en Python.
+- Savoir insérer, supprimer et rechercher des éléments efficacement.
+
+## 📜 Énoncé
+
+Vous allez créer une **table de hachage** (HashTable), c’est-à-dire une
+structure de données qui permet d’associer des clés à des valeurs, avec des
+opérations rapides d’insertion, de suppression et de recherche.
+
+### 🧩 Partie 1 — Implémentation de la structure
+
+1. Implémentez une classe `HashTable` avec :
+
+    * une structure interne pour stocker les paires clé/valeur (par exemple,
+      une liste de listes pour gérer les collisions par chaînage),
+    * une méthode `insert(key, value)` pour ajouter ou mettre à jour une paire clé/valeur,
+    * une méthode `lookup(key)` pour rechercher la valeur associée à une clé,
+    * une méthode `delete(key)` pour supprimer une clé et sa valeur associée,
+    * une méthode `contains(key)` qui retourne `True` si la clé est présente
+      dans la table, sinon `False`.
+
+2. Gérez les collisions à l’aide du chaînage.
+
+### 🧪 Partie 2 — Tests et démonstration
+
+Créez des tests pour vérifier le bon fonctionnement de votre implémentation. Par exemple :
+
+1. Insérez les paires suivantes dans la table :  
+   `("pomme", 1)`, `("banane", 2)`, `("orange", 3)`, `("kiwi", 4)`
+
+2. Vérifiez la présence de certaines clés avec `contains`.
+
+3. Supprimez une clé, puis vérifiez qu’elle n’est plus présente.
+
+4. Testez l’insertion d’une clé déjà existante (mise à jour de la valeur).
+
+## 📝 Pour vous aider
+
+Si vous êtes bloqué, voir les ressources sur indiquées dans la [planification de la semaine.](../index.mdx)
+
+:::warning
+
+Attention, ne pas simplement copier-coller le code de ces ressources. Essayez
+de l'écrire par vous-même en vous inspirant des exemples.
+
+:::
