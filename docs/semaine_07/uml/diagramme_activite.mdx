@@ -1,0 +1,61 @@
+---
+sidebar_label: Diagramme d'activité
+sidebar_position: 5
+description: Comprendre et créer des diagrammes d'activité en UML
+---
+
+# Diagramme d'activité
+
+Le diagramme d'activité est utilisé principalement pour représenter
+visuellement les flux de travail ou les procédures au sein d'un système. Très
+semblable à un organigramme, il permet de décrire la logique opérationnelle,
+indiquant clairement les différentes étapes, les points de décision, les
+actions et les interactions qui composent une activité.
+
+## Quand utilise-t-on le diagramme d'activité ?
+
+- Lors de l'analyse et de la conception pour modéliser des procédures complexes.
+- Pour détailler la logique d'une opération ou d'une fonctionnalité particulière.
+- Afin d'optimiser ou de réorganiser une procédure existante.
+- Pour identifier les interactions possibles entre différents systèmes ou acteurs.
+
+## À qui s'adresse-t-il ?
+
+Le diagramme d'activité s'adresse principalement aux développeurs, pour
+comprendre la logique métier à implémenter ainsi qu'aux gestionnaires de
+projet, pour visualiser et optimiser les procédures opérationnelles.
+
+## Étapes pour créer un diagramme d'activité
+
+1. Identifier la procédure à représenter.
+2. Lister les étapes principales : Décomposer la procédure en activités
+   spécifiques à réaliser. Utiliser des verbes d'action pour les nommer.
+3. Identifier les décisions et branchements. Représenter clairement les points
+   de décision avec des losanges et indiquer les conditions ou questions
+   associées.
+4. Décrire les flux d'activité : Utiliser des flèches pour montrer clairement
+   la séquence logique entre les étapes.
+5. Ajouter les points de départ et de fin : Spécifier clairement l'initiation
+   et la conclusion du procédures.
+6. Valider la logique du procédures : Vérifier que toutes les étapes, décisions
+   et branches sont cohérentes et complètes.
+
+## Exemple de diagramme d'activité
+
+Voici un exemple de diagramme d'activité illustrant le processus d'inscription à un cours :
+
+export const d1 = `
+flowchart TD
+  A[Choisir un cours] --> B{Vérifier les prérequis}
+  B -->|Prérequis validés| C[Payer les frais]
+  B -->|Prérequis non validés| D[Notifier l'utilisateur]
+  C --> E[Confirmer l'inscription]
+`
+
+<WithMermaidCode code={d1} />
+
+## Bonnes pratiques pour réaliser un diagramme d'activité
+
+- Assurez-vous que le diagramme reste clair et facilement compréhensible.
+- Limitez le nombre d'étapes pour éviter la surcharge visuelle. Privilégiez la
+  simplicité en ne détaillant que les actions essentielles.
