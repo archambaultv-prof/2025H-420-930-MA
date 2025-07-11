@@ -1,0 +1,158 @@
+---
+sidebar_label: Singleton et invertion des dépendances
+sidebar_position: 1
+description: Singleton et inversion des dépendances
+---
+
+# 🔂 Singleton et invertion des dépendances
+
+## 🎯 Objectifs pédagogiques
+
+- Mettre en pratique le patron de conception Singleton.
+- Comprendre l'inversion des dépendances et son utilité.
+
+## 📜 Énoncé
+
+Le code ci-dessous implémente un service de configuration qui doit être unique
+dans l'application. Il n'utilise pas le patron singleton ni l'inversion des
+dépendances. Vous devez réécrire le code et l'adapter pour respecter ces
+principes selon les intructions détaillées plus bas.
+
+```python
+import json
+import os
+
+# Code problématique à refactoriser
+class ConfigurationService:
+    def __init__(self, config_file="config.json"):
+        self.config_file = os.path.join(os.path.dirname(__file__), config_file)
+        self.config = {}
+        self.load_config()
+    
+    def load_config(self):
+        if os.path.exists(self.config_file):
+            with open(self.config_file, 'r') as f:
+                self.config = json.load(f)
+        else:
+            # Configuration par défaut
+            self.config = {
+                "database_url": "localhost:5432",
+                "api_key": "default_key",
+                "debug_mode": True,
+                "max_connections": 10
+            }
+    
+    def get_config(self, key):
+        return self.config.get(key)
+    
+    def set_config(self, key, value):
+        self.config[key] = value
+    
+    def save_config(self):
+        with open(self.config_file, 'w') as f:
+            json.dump(self.config, f, indent=2)
+
+class DatabaseConnection:
+    def __init__(self):
+        # Problème: création directe d'une dépendance
+        self.config_service = ConfigurationService()
+        self.connection_string = self.config_service.get_config("database_url")
+        self.max_connections = self.config_service.get_config("max_connections")
+    
+    def connect(self):
+        print(f"Connexion à la base de données: {self.connection_string}")
+        print(f"Nombre max de connexions: {self.max_connections}")
+
+class ApiClient:
+    def __init__(self):
+        # Problème: création directe d'une autre instance
+        self.config_service = ConfigurationService()
+        self.api_key = self.config_service.get_config("api_key")
+        self.debug_mode = self.config_service.get_config("debug_mode")
+    
+    def make_request(self, endpoint):
+        debug_info = f" [DEBUG MODE]" if self.debug_mode else ""
+        print(f"Requête API vers {endpoint} avec clé: {self.api_key}{debug_info}")
+
+class Logger:
+    def __init__(self):
+        # Problème: encore une autre instance
+        self.config_service = ConfigurationService()
+        self.debug_mode = self.config_service.get_config("debug_mode")
+    
+    def log(self, message):
+        if self.debug_mode:
+            print(f"[LOG] {message}")
+
+# Code d'utilisation problématique
+def main():
+    # Chaque classe crée sa propre instance de ConfigurationService
+    db = DatabaseConnection()
+    api = ApiClient()
+    logger = Logger()
+
+    db.connect()
+    api.make_request("/users")
+    logger.log("Application démarrée")
+
+    # Si on modifie la configuration dans une instance...
+    db.config_service.set_config("debug_mode", False)
+    db.config_service.save_config()
+
+    # Les autres instances ne voient pas le changement!
+    logger.log("Cette ligne devrait-elle s'afficher?")
+
+if __name__ == "__main__":
+    main()
+```
+
+### 🔍 Analyse des problèmes
+
+Le code ci-dessus présente plusieurs problèmes majeurs :
+
+#### 1. Absence du patron Singleton
+- Chaque classe crée sa propre instance de `ConfigurationService`
+- Cela peut mener à des incohérences dans la configuration
+- Les modifications ne sont pas partagées entre les instances
+
+#### 2. Violation du principe d'inversion des dépendances
+- Les classes `DatabaseConnection`, `ApiClient` et `Logger` créent directement leurs dépendances
+- Elles sont fortement couplées à `ConfigurationService`
+- Difficile de tester unitairement ou de changer l'implémentation
+
+#### 3. Problèmes de synchronisation
+- Si une partie de l'application modifie la configuration, les autres parties ne le voient pas
+- Risque d'états incohérents dans l'application
+
+### 📋 Instructions détaillées
+
+#### Partie 1: Implémentation du patron Singleton
+
+Transformez la classe `ConfigurationService` en Singleton en utilisant  la
+méthode spéciale `__new__` pour contrôler la création de l'instance.
+
+#### Partie 2: Application de l'inversion des dépendances
+
+Refactorisez les classes `DatabaseConnection`, `ApiClient` et `Logger` pour
+qu'elles respectent le principe d'inversion des dépendances.
+
+#### Partie 2.1 Création d'une interface abstraite
+
+Créez une classe abstraite `ConfigInterface` qui définit le contrat :
+
+```python
+from abc import ABC, abstractmethod
+
+class ConfigInterface(ABC):
+    @abstractmethod
+    def get_config(self, key: str):
+        pass
+    
+    @abstractmethod
+    def set_config(self, key: str, value):
+        pass
+```
+
+#### Partie 2.2 Injection de dépendances
+
+Modifiez les classes pour qu'elles reçoivent leur dépendance via le constructeur.

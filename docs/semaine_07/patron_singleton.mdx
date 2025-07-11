@@ -1,0 +1,104 @@
+---
+sidebar_position: 2
+sidebar_label: Patron singleton
+description: Patron de conception Singleton
+---
+
+# Patron singleton
+
+Le patron singleton garantit qu’une classe n’a qu’une
+seule instance et fournit un point d’accès global à cette instance. On le
+retrouve souvent dans les langages orientés objet pour gérer des ressources
+partagées (connexion base de données, logger, etc.).
+
+## Quand l’utiliser ?
+
+- **Gestion de configuration globale**  
+  Vous voulez charger un fichier de configuration une fois et le réutiliser partout.
+- **Logger**  
+  Un seul objet logger pour toute l’application évite les conflits de fichier de log.
+- **Pool de connexions**  
+  Accès unique et coordonné aux connexions de base de données.
+- **Accès à du matériel**  
+  Par exemple, un objet unique qui contrôle un port série ou une carte graphique.
+- **Cache partagé**  
+  Stocker en mémoire des résultats qui doivent être partagés.
+
+
+## Implémentations en Python
+
+Le plus simple est d’utiliser la méthode `__new__` pour contrôler la création
+de l’instance. Cette méthode est appelée avant `__init__`. Voici un exemple :
+
+```python
+class Singleton:
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            # initialisation éventuelle
+        return cls._instance
+
+# Exemple d’utilisation
+s1 = Singleton()
+s2 = Singleton()
+print(s1 is s2)  # True
+```
+
+Attention toutefois avec la méthode `__init__` : elle est appelée à chaque
+fois que l’on crée une nouvelle instance, même si `__new__` retourne la même
+instance. Pour éviter cela, on peut ajouter un drapeau :
+
+```python
+class Singleton:
+    _instance = None
+    _initialized = False
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        if not self._initialized:
+            # initialisation ici
+            self._initialized = True
+            self.value = 42  # Exemple d'attribut
+
+# Exemple d’utilisation
+s1 = Singleton()
+s2 = Singleton()
+print(s1 is s2)  # True
+print(s1.value)  # 42
+print(s2.value)  # 42
+```
+
+## Pourquoi c’est parfois un anti-patron
+
+La patron singleton est souvent critiqué pour plusieurs raisons :
+
+1. **État global caché**
+
+   * Difficulté à suivre et tester le code car l’instance unique peut être modifiée partout.
+2. **Couplage fort**
+
+   * Les classes consommatrices dépendent directement du singleton, ce qui complique le refactoring.
+3. **Testabilité réduite**
+
+   * Difficile de substituer une fausse implémentation (mock) en tests unitaires.
+4. **Problèmes de concurrence**
+
+   * En multi-thread, on doit protéger l’accès à la création de l’instance.
+5. **Masque des dépendances**
+
+   * L’injection de dépendances explicite est souvent plus claire et flexible.
+
+### Alternatives
+
+* **Injection de dépendances** : on passe explicitement l’objet en paramètre.
+* **patron Factory** : pour contrôler la création d’instances sans forcer l’unicité.
+
+## Références
+
+- [https://refactoring.guru/design-patterns/singleton](https://refactoring.guru/design-patterns/singleton)
