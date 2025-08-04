@@ -144,6 +144,87 @@ if __name__ == '__main__':
     # Observateur B a reçu une mise à jour : Nouvelle valeur
 ``` 
 
+## Exemple fait en classe
+
+Ceci est le code que nous avons fait en classe pour illustrer le patron observateur.
+
+```python
+from abc import ABC, abstractmethod
+
+
+class IObservateur(ABC):
+    @abstractmethod
+    def mettre_a_jour(self, nb_participants):
+        pass
+
+class Admin(IObservateur):
+    def mettre_a_jour(self, nb_participants):
+        print(f"[Admin] : Le cours aura bien lieu avec {nb_participants} participants.")
+
+class Participants(IObservateur):
+    def mettre_a_jour(self, nb_participants):
+        for i in range(nb_participants):
+            print(f"[Participant {i + 1}] : Le cours aura bien lieu.")
+
+class ServiceInformatique(IObservateur):
+    def mettre_a_jour(self, nb_participants):
+        print(f"[Service informatique] : Le cours aura bien lieu avec {nb_participants} participants.")
+
+class Professeur(IObservateur):
+    def __init__(self, notification=True):
+        self.notification = notification
+
+    def mettre_a_jour(self, nb_participants):
+        if self.notification:
+            print(f"[Professeur] : Le cours aura bien lieu avec {nb_participants} participants.")
+
+class Emetteur:
+    def __init__(self):
+        self.observateurs: list[IObservateur] = []
+
+    def ajouter_observateur(self, observateur: IObservateur):
+        self.observateurs.append(observateur)
+
+    def retirer_observateur(self, observateur: IObservateur):
+        if observateur in self.observateurs:
+            self.observateurs.remove(observateur)
+
+    def notifier_observateurs(self, nb_participants):
+        for observateur in self.observateurs:
+            observateur.mettre_a_jour(nb_participants)
+
+class Cours(Emetteur):
+    def __init__(self, nom):
+        super().__init__()
+        self.nom = nom
+        self.participants = 0
+
+    def ajouter_participant(self):
+        self.participants += 1
+        if self.participants == 5:
+            self.notifier_observateurs(self.participants)
+
+
+class Tutorat(Emetteur):
+    def __init__(self, nom):
+        super().__init__()
+        self.nom = nom
+        self.participants = 0
+
+    def ajouter_participant(self):
+        self.participants += 1
+        if self.participants == 3:
+            self.notifier_observateurs(self.participants)
+
+a = Cours("Yoga")
+a.ajouter_observateur(Admin())
+a.ajouter_observateur(Participants())
+a.ajouter_observateur(ServiceInformatique())
+a.ajouter_observateur(Professeur(False))
+for i in range(10):
+    a.ajouter_participant()
+```
+
 ## Avantages et inconvénients
 
 
