@@ -1,0 +1,249 @@
+---
+sidebar_position: 3
+sidebar_label: Injection des dépendances
+description: Injection des dépendances
+---
+
+
+# 💉 Injection des dépendances
+
+L'injection des dépendances est un patron de conception qui permet de fournir
+les dépendances d'un objet depuis l'extérieur plutôt que de les créer
+directement dans l'objet. Cela améliore la flexibilité, la testabilité et
+réduit le couplage entre les classes.
+
+## Principe de base
+
+Au lieu qu'une classe crée ses propres dépendances, elles lui sont "injectées"
+par un mécanisme externe.
+
+### Sans injection de dépendances
+
+```python
+class Logger:
+    def log(self, message):
+        print(f"LOG: {message}")
+
+class EmailService:
+    def __init__(self):
+        self.logger = Logger()  # Dépendance hard-codée
+    
+    def send_email(self, to, subject, body):
+        self.logger.log(f"Envoi email à {to}")
+        # logique d'envoi...
+```
+
+### Avec injection de dépendances
+
+```python
+class Logger:
+    def log(self, message):
+        print(f"LOG: {message}")
+
+class EmailService:
+    def __init__(self, logger):  # Dépendance injectée
+        self.logger = logger
+    
+    def send_email(self, to, subject, body):
+        self.logger.log(f"Envoi email à {to}")
+        # logique d'envoi...
+
+# Utilisation
+logger = Logger()
+email_service = EmailService(logger)
+```
+
+## Types d'injection
+
+### 1. Injection par constructeur
+
+La dépendance est fournie lors de la création de l'objet :
+
+```python
+class DatabaseService:
+    def __init__(self, connection):
+        self.connection = connection
+    
+    def save_user(self, user):
+        # utilise self.connection
+        pass
+
+# Utilisation
+connection = DatabaseConnection("localhost")
+db_service = DatabaseService(connection)
+```
+
+### 2. Injection par propriété (setter)
+
+La dépendance est assignée après la création :
+
+```python
+class ReportGenerator:
+    def __init__(self):
+        self._data_source = None
+    
+    @property
+    def data_source(self):
+        return self._data_source
+    
+    @data_source.setter
+    def data_source(self, value):
+        self._data_source = value
+    
+    def generate_report(self):
+        if self._data_source is None:
+            raise ValueError("Data source not set")
+        # génère le rapport...
+
+# Utilisation
+report_gen = ReportGenerator()
+report_gen.data_source = DatabaseSource()
+```
+
+### 3. Injection par méthode
+
+La dépendance est passée en paramètre à chaque appel :
+
+```python
+class PaymentProcessor:
+    def process_payment(self, amount, payment_method):
+        # payment_method est injecté à chaque appel
+        return payment_method.charge(amount)
+
+# Utilisation
+processor = PaymentProcessor()
+processor.process_payment(100, CreditCardMethod())
+processor.process_payment(50, PaypalMethod())
+```
+
+## Avantages
+
+### 1. Testabilité améliorée
+
+```python
+# Mock pour les tests
+class MockLogger:
+    def __init__(self):
+        self.messages = []
+    
+    def log(self, message):
+        self.messages.append(message)
+
+# Test unitaire
+def test_email_service():
+    mock_logger = MockLogger()
+    email_service = EmailService(mock_logger)
+    
+    email_service.send_email("test@example.com", "Test", "Body")
+    
+    assert len(mock_logger.messages) == 1
+    assert "test@example.com" in mock_logger.messages[0]
+```
+
+### 2. Flexibilité et réutilisabilité
+
+```python
+# Différentes implémentations de logger
+class FileLogger:
+    def log(self, message):
+        with open("app.log", "a") as f:
+            f.write(f"{message}\n")
+
+class DatabaseLogger:
+    def __init__(self, db_connection):
+        self.db = db_connection
+    
+    def log(self, message):
+        self.db.execute("INSERT INTO logs (message) VALUES (?)", (message,))
+
+# Même service, différents loggers
+email_service_console = EmailService(Logger())
+email_service_file = EmailService(FileLogger())
+email_service_db = EmailService(DatabaseLogger(db_conn))
+```
+
+### 3. Respect du principe ouvert/fermé
+
+Le code est ouvert à l'extension (nouvelles implémentations) mais fermé à la modification.
+
+## Conteneur d'injection (DI Container)
+
+Pour les applications complexes, on peut utiliser un conteneur qui gère automatiquement les dépendances :
+
+```python
+class DIContainer:
+    def __init__(self):
+        self._services = {}
+        self._singletons = {}
+    
+    def register(self, interface, implementation, singleton=False):
+        self._services[interface] = (implementation, singleton)
+    
+    def resolve(self, interface):
+        if interface not in self._services:
+            raise ValueError(f"Service {interface} not registered")
+        
+        implementation, is_singleton = self._services[interface]
+        
+        if is_singleton:
+            if interface not in self._singletons:
+                self._singletons[interface] = implementation()
+            return self._singletons[interface]
+        
+        return implementation()
+
+# Configuration
+container = DIContainer()
+container.register("logger", Logger, singleton=True)
+container.register("email_service", 
+                  lambda: EmailService(container.resolve("logger")))
+
+# Utilisation
+email_service = container.resolve("email_service")
+```
+
+## Bonnes pratiques
+
+### 1. Utiliser des interfaces/protocoles
+
+```python
+from abc import ABC, abstractmethod
+
+class LoggerInterface(ABC):
+    @abstractmethod
+    def log(self, message: str) -> None:
+        pass
+
+class ConsoleLogger(LoggerInterface):
+    def log(self, message: str) -> None:
+        print(f"LOG: {message}")
+
+class EmailService:
+    def __init__(self, logger: LoggerInterface):
+        self.logger = logger
+```
+
+### 2. Éviter la sur-injection
+
+Ne pas injecter des dépendances pour des classes très simples ou des types primitifs.
+
+### 3. Préférer l'injection par constructeur
+
+Plus explicite et garantit que l'objet est dans un état valide dès sa création.
+
+## Comparaison avec le singleton
+
+| Aspect | Singleton | Injection des dépendances |
+|--------|-----------|---------------------------|
+| **Couplage** | Fort (dépendance hard-codée) | Faible (dépendance externe) |
+| **Testabilité** | Difficile (état global) | Facile (mocks/stubs) |
+| **Flexibilité** | Limitée (une seule implémentation) | Élevée (multiples implémentations) |
+| **Réutilisabilité** | Faible | Élevée |
+| **Complexité** | Simple | Plus complexe (configuration) |
+
+## Quand utiliser l'injection des dépendances
+
+- **Applications avec besoins de tests unitaires**
+- **Systèmes nécessitant différentes configurations**
+- **Code devant être flexible et évolutif**
+- **Quand on veut découpler les composants**

@@ -1,0 +1,305 @@
+---
+sidebar_position: 1
+sidebar_label: Principes SOLID
+description: Principes SOLID
+---
+
+# 💪 Principes SOLID
+
+## Introduction aux principes SOLID
+
+Les principes SOLID ont été popularisés par Robert C. Martin (« Uncle Bob »).
+Ils sont un ensemble de cinq principes de conception orientée objet qui visent
+à améliorer la qualité du code et sa maintenabilité. Le terme **SOLID** est un
+acronyme pour :
+
+  - **S**ingle Responsibility  
+  - **O**pen/Closed  
+  - **L**iskov Substitution  
+  - **I**nterface Segregation  
+  - **D**ependency Inversion  
+
+Ces principes visent à rendre votre code :
+
+- **Flexible** – facile à faire évoluer  
+- **Lisible** – simple à comprendre  
+- **Testable** – propice aux tests unitaires  
+
+## 1. SRP – Principe de Responsabilité Unique
+
+### Concept
+
+Une classe ne devrait avoir qu’une seule raison de changer, c’est-à-dire
+qu’elle ne doit couvrir qu’une seule responsabilité.
+
+### Exemple
+
+#### Violation  
+```python
+class Facture:
+    def __init__(self, montant):
+        self.montant = montant
+
+    def calculer_taxes(self):
+        return self.montant * 0.2
+
+    def enregistrer(self):
+        # SQL pour enregistrer la facture
+        pass
+
+    def envoyer_email(self, email_client):
+        # SMTP pour envoyer la facture
+        pass
+```
+
+Ici, `Facture` gère à la fois la logique métier, la persistance et l’envoi d’emails.
+
+#### Refactorisation
+
+```python
+class Facture:
+    def __init__(self, montant):
+        self.montant = montant
+
+class CalculateurTaxes:
+    TAUX = 0.2
+    def calculer(self, facture: Facture) -> float:
+        return facture.montant * self.TAUX
+
+class FactureRepository:
+    def enregistrer(self, facture: Facture):
+        # SQL
+        pass
+
+class ServiceEmail:
+    def envoyer(self, destinataire: str, contenu: str):
+        # SMTP
+        pass
+```
+
+Chaque classe a maintenant **une** responsabilité bien définie.
+
+## 2. OCP – Principe Open/Closed
+
+### Concept
+
+Les entités doivent être **ouvertes à l’extension** (ajout de fonctionnalités)
+mais **fermées à la modification** de leur code source existant.
+
+### Exemple
+
+#### Violation
+
+```python
+class Facture:
+    def __init__(self, montant, type_client):
+        self.montant = montant
+        self.type = type_client
+
+    def calculer_remise(self):
+        if self.type == 'VIP':
+            return self.montant * 0.1
+        elif self.type == 'Regular':
+            return self.montant * 0.05
+        else:
+            return 0
+```
+
+Ajouter un nouveau type de remise force à modifier `calculer_remise()`.
+
+#### Refactorisation (pattern Stratégie)
+
+```python
+from abc import ABC, abstractmethod
+
+class StrategieRemise(ABC):
+    @abstractmethod
+    def calculer(self, montant: float) -> float:
+        pass
+
+class RemiseVIP(StrategieRemise):
+    def calculer(self, montant):
+        return montant * 0.1
+
+class RemiseRegular(StrategieRemise):
+    def calculer(self, montant):
+        return montant * 0.05
+
+class Facture:
+    def __init__(self, montant, strategie: StrategieRemise):
+        self.montant = montant
+        self.strategie = strategie
+
+    def calculer_remise(self):
+        return self.strategie.calculer(self.montant)
+```
+
+Pour ajouter une nouvelle remise, on crée simplement une sous-classe de
+`StrategieRemise`.
+
+## 3. LSP – Principe de Substitution de Liskov
+
+### Concept
+
+Une sous-classe doit pouvoir remplacer sa super-classe sans que le comportement
+attendu du programme n’en soit altéré.
+
+### Exemple
+
+#### Violation
+
+```python
+class Oiseau:
+    def voler(self):
+        print("Je vole")
+
+class Autruche(Oiseau):
+    def voler(self):
+        raise NotImplementedError("Je ne peux pas voler")
+```
+
+L’`Autruche` ne respecte pas l’API `voler()` de `Oiseau`.
+
+#### Refactorisation
+
+```python
+from abc import ABC, abstractmethod
+
+class Oiseau(ABC):
+    @abstractmethod
+    def deplacer(self):
+        pass
+
+class OiseauVolant(Oiseau):
+    def deplacer(self):
+        print("Je vole")
+
+class Autruche(Oiseau):
+    def deplacer(self):
+        print("Je cours")
+```
+
+On passe par une méthode plus générale `deplacer()`, que chaque oiseau
+implémente à sa façon.
+
+## 4. ISP – Principe de Ségrégation d’Interface
+
+### Concept
+
+Préférez plusieurs interfaces spécifiques et cohésives plutôt qu’une interface
+unique et volumineuse.
+
+### Exemple
+
+#### Violation
+
+```python
+class Imprimante:
+    def imprimer(self, doc): pass
+    def scanner(self, doc): pass
+    def faxer(self, doc): pass
+
+class ImprimanteBasique(Imprimante):
+    def imprimer(self, doc): pass
+    def scanner(self, doc):
+        raise NotImplementedError
+    def faxer(self, doc):
+        raise NotImplementedError
+```
+
+`ImprimanteBasique` est forcée d’implémenter des méthodes inutiles.
+
+#### Refactorisation
+
+```python
+from abc import ABC, abstractmethod
+
+class IImpression(ABC):
+    @abstractmethod
+    def imprimer(self, doc): pass
+
+class IScan(ABC):
+    @abstractmethod
+    def scanner(self, doc): pass
+
+class IFax(ABC):
+    @abstractmethod
+    def faxer(self, doc): pass
+
+class ImprimanteBasique(IImpression):
+    def imprimer(self, doc): pass
+
+class ImprimanteMultifonction(IImpression, IScan, IFax):
+    def imprimer(self, doc): pass
+    def scanner(self, doc): pass
+    def faxer(self, doc): pass
+```
+
+Chaque imprimante implémente uniquement les interfaces dont elle a besoin.
+
+
+## 5. DIP – Principe d’Inversion de Dépendance
+
+### Concept
+
+1. Les modules de haut niveau ne dépendent pas de modules de bas niveau : tous
+   deux dépendent d’abstractions.
+2. Les détails (implémentations concrètes) doivent dépendre d’abstractions, et
+   non l’inverse.
+
+### Exemple
+
+#### Violation
+
+```python
+class MySQLClient:
+    def connecter(self): pass
+
+class ServiceUtilisateur:
+    def __init__(self):
+        self.db = MySQLClient()  # dépendance trop concrète
+
+    def enregistrer(self, utilisateur):
+        self.db.connecter()
+        # ...
+```
+
+Le service est lié à MySQL, on ne peut pas changer de base de données sans
+modifier `ServiceUtilisateur`.
+
+#### Refactorisation
+
+```python
+from abc import ABC, abstractmethod
+
+class DBClient(ABC):
+    @abstractmethod
+    def connecter(self): pass
+
+class MySQLClient(DBClient):
+    def connecter(self): pass
+
+class SQLiteClient(DBClient):
+    def connecter(self): pass
+
+class ServiceUtilisateur:
+    def __init__(self, db_client: DBClient):
+        self.db = db_client
+
+    def enregistrer(self, utilisateur):
+        self.db.connecter()
+        # ...
+```
+
+On injecte la dépendance via le constructeur et on peut facilement passer d’un
+client MySQL à SQLite.
+
+## Conclusion
+
+Vous venez de parcourir les cinq principes SOLID :
+
+1. **SRP** : responsabilité unique
+2. **OCP** : ouvert/fermé
+3. **LSP** : substitution de Liskov
+4. **ISP** : ségrégation d’interface
+5. **DIP** : inversion de dépendance
