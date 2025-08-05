@@ -43,7 +43,6 @@ const config = {
       ({
         docs: {
           sidebarPath: './sidebars.js',
-          routeBasePath: '/',
           editUrl:
             'https://github.com/archambaultv-prof/2025H-420-930-MA/tree/main/',
         },
@@ -72,7 +71,7 @@ const config = {
         }
       },
       navbar: {
-        title: "Système d'exploitation",
+        title: "Algorithmes et modèles de programmation",
         logo: {
           alt: 'Site Logo',
           src: 'img/930.svg',
@@ -80,9 +79,21 @@ const config = {
         items: [
           {
             type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
+            sidebarId: 'scheduleSidebar',
             position: 'left',
-            label: 'Accueil',
+            label: 'Échéancier',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'classNotes',
+            position: 'left',
+            label: 'Notes de cours',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'evaluations',
+            position: 'left',
+            label: 'Évaluations',
           },
           {
             href: 'https://github.com/archambaultv-prof/2025H-420-930-MA/',
@@ -163,6 +174,11 @@ const config = {
         darkTheme: prismThemes.dracula,
       },
     }),
+  plugins: [
+    [require.resolve('docusaurus-lunr-search'), {
+      languages: ['fr'],
+    }]
+  ]
 };
 
 export default config;

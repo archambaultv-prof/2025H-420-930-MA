@@ -1,0 +1,134 @@
+---
+sidebar_label: Notation grand O
+sidebar_position: 2
+description: Notation grand O
+---
+
+
+# 📈 Complexité et structures de contrôle
+
+## 🎯 Objectif pédagogique
+
+* Créer un projet Python à l'aide de uv
+* Comprendre le concept de complexité algorithmique (notation grand O)
+* Savoir estimer la complexité temporelle d’un algorithme simple
+* Relier la complexité à la structure du code (boucles, conditions, appels de fonction)
+* Comparer l’efficacité de différents algorithmes
+
+## 🔍 Partie 1 – Introduction guidée
+
+### 📚 Lecture et exploration
+
+Lisez les deux sections suivantes :
+
+### 🧠 1. Qu’est-ce que la notation grand O ?
+
+La notation **O(...)** sert à estimer comment le **temps d’exécution** d’un
+algorithme croît en fonction de la taille de l’entrée. On cherche à répondre à
+cette question :
+
+> « Si je double la taille de mes données, combien de fois plus longtemps mon programme prendra-t-il à s’exécuter ? »
+
+Exemples :
+
+* `O(1)` : temps constant – ne dépend pas de la taille de l’entrée
+* `O(n)` : temps linéaire – si on double l’entrée, le temps double
+* `O(n²)` : temps quadratique – si on double l’entrée, le temps est multiplié par 4
+
+### 🧠 2. Règles générales pour estimer la complexité
+
+Voici quelques règles utiles :
+
+| Structure                                     | Complexité approximative |
+| --------------------------------------------- | ------------------------ |
+| Instruction simple                            | `O(1)`                   |
+| Boucle `for i in range(n)`                    | `O(n)`                   |
+| Boucle imbriquée `for i in range(n): for j in range(m)` | `O(n * m)`               |
+| Appel récursif sur moitié (`n // 2`)          | `O(log n)`               |
+| Double récursion (ex. : Fibonacci)            | `O(2^n)`                 |
+
+Note : on ne compte **que les parties les plus coûteuses** (on garde le terme
+dominant).
+
+## 🔨 Partie 2 – Analyse de code
+
+### ✏️ Instructions
+
+Pour chaque extrait de code suivant, **indiquez la complexité temporelle en
+notation grand O**, en justifiant votre réponse.
+
+### 📄 Extraits
+
+```python
+# Extrait A
+def somme(liste):
+    total = 0
+    for x in liste:
+        total += x
+    return total
+```
+
+```python
+# Extrait B
+def produit_matrices(A, B):
+    n = len(A)
+    m = len(B[0])
+    p = len(B)
+    resultat = [[0] * m for _ in range(n)]
+    for i in range(n):
+        for j in range(m):
+            for k in range(p):
+                resultat[i][j] += A[i][k] * B[k][j]
+    return resultat
+```
+
+```python
+# Extrait C
+def cherche(x, liste):
+    for i in range(len(liste)):
+        if liste[i] == x:
+            return True
+    return False
+```
+
+```python
+# Extrait D
+def mystere(n):
+    i = 1
+    while i < n:
+        i *= 2
+    return i
+```
+
+---
+
+## 🧪 Partie 3 – Expérimentation
+
+### 🧑‍💻 Tâche
+
+1. Créez un nouveau projet Python avec `uv`.
+
+2. Configurez un script principal `main`. Ce script pourra être exécuté avec la commande `uv run main`.
+
+3. Écrivez un programme Python qui compare le **temps d’exécution** de deux fonctions que vous recevrez en paramètre.
+   Pour les plus aventuriers, vous pouvez même vous faire un fichier `fonctions.py` qui contient des fonctions et votre
+   programme principal les découvre grâce au module `inspect`.
+
+4. Mesurez le **temps d’exécution** des deux fonctions pour des valeurs croissantes de `n` (ex. : 100, 200, 400, 800…)
+
+5. Sauvegardez les résultats dans un fichier CSV avec les colonnes `n`, `fonction1`, `fonction2`.
+
+5. Sauvegardez un graphique comparatif avec `matplotlib`.
+
+### 💡 Aide
+
+Vous pouvez utiliser :
+
+```python
+import time
+
+debut = time.time()
+# votre code ici
+fin = time.time()
+print("Durée :", fin - debut)
+```
