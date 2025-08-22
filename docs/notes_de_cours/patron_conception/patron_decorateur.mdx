@@ -70,11 +70,12 @@ responsabilités sans changer l’interface.
 
 ---
 
-## Exemple d'implémentations en Python
+## Exemples d'implémentations en Python
 
-### Décorateurs d’envoi de notifications (journalisation et antispam)
+<Tabs>
+<TabItem value="notifications" label="Notifications">
 
-Un exemple montrant l’ajout de responsabilités.
+Un exemple montrant l’ajout de responsabilités (journalisation et antispam) à une classe de base.
 
 ```python
 from abc import ABC, abstractmethod
@@ -121,6 +122,63 @@ notif = JournalisationDecorateur(AntiSpamDecorateur(notif, intervalle_s=0.5))
 notif.envoyer("Bonjour")
 notif.envoyer("Bonjour")  # probablement bloqué selon le timing
 ```
+
+</TabItem>
+<TabItem value="boissons" label="Boissons">
+
+Un exemple montrant l’ajout d'options (sucre et lait) à une classe de base.
+
+```python
+from abc import ABC, abstractmethod
+
+# Composant
+class Beverage(ABC):
+    @abstractmethod
+    def description(self) -> str: ...
+    @abstractmethod
+    def cost(self) -> float: ...
+
+# Composant concret
+class Coffee(Beverage):
+    def __init__(self):
+        print("Création d'un café")
+    def description(self) -> str:
+        return "Café"
+
+    def cost(self) -> float:
+        return 3.0
+
+# Décorateur de base
+class BeverageDecorator(Beverage):
+    def __init__(self, beverage: Beverage) -> None:
+        print(f"Décoration de {self.__class__.__name__}")
+        self._beverage = beverage
+
+# Décorateurs concrets
+class Sugar(BeverageDecorator):
+    def description(self) -> str:
+        return self._beverage.description() + " + sucre"
+
+    def cost(self) -> float:
+        return self._beverage.cost() + 0.5
+
+class Milk(BeverageDecorator):
+    def description(self) -> str:
+        return self._beverage.description() + " + lait"
+
+    def cost(self) -> float:
+        return self._beverage.cost() + 0.7
+
+# Démo
+if __name__ == "__main__":
+    b: Beverage = Coffee()
+    b = Milk(Sugar(b))   # on “enveloppe” le Coffee avec Sugar puis on ajoute Milk par-dessus
+    print(b.description(), "=", b.cost(), "$")
+```
+
+</TabItem>
+
+</Tabs>
 
 ---
 

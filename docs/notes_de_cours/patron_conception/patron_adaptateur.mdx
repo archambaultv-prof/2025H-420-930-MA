@@ -52,6 +52,9 @@ classDiagram
 
 ## Implémentations en Python
 
+<Tabs>
+<TabItem value="logger" label="Logger">
+
 Contexte: le client travaille avec `Logger` (méthode `log(msg)`), alors qu’une
 librairie tierce expose `ThirdPartyLog.write(level, message)`.
 
@@ -93,7 +96,8 @@ Points clés:
 - L’adapteur traduit `log(msg)` en `write(level, message)`.
 - Facile à tester (on peut injecter un faux `ThirdPartyLog`).
 
-### Exemple « réel » de conversion de format
+</TabItem>
+<TabItem value="Encodage" label="Encodage">
 
 Adapter une API renvoyant des bytes vers une interface unicode.
 
@@ -120,6 +124,51 @@ r = ByteToTextReader(ByteSource())
 print(r.read_text().strip())  # Bonjour, monde!
 ```
 
+</TabItem>
+
+<TabItem value="Prises" label="Prises électriques">
+
+Un exemple tirée de la vie courante: un appareil américain (110V) doit être
+utilisé avec une prise européenne (220V).
+
+```python
+from abc import ABC, abstractmethod
+
+# Interface pour la prise américaine et appareil
+# qui utilise l'électricité à 110V
+
+class IPriseAmericaine(ABC):
+    @abstractmethod
+    def fournir_electricite_110(self) -> float:
+        ...
+
+class AppareilAmericain:
+    def __init__(self):
+        self.voltage = 110
+
+    def utiliser(self, prise: IPriseAmericaine):
+        print(f"Utilisation de l'appareil américain avec {prise.fournir_electricite_110()}V")
+
+# Mais seulement une prise européenne est disponible
+class PriseEuropeenne:
+    def fournir_electricite_220(self):
+        return 220
+
+class Adaptateur(IPriseAmericaine):
+    def __init__(self, priseEuro: PriseEuropeenne):
+        self.priseEuro = priseEuro
+    
+    def fournir_electricite_110(self):
+        return self.priseEuro.fournir_electricite_220() / 2
+
+if __name__ == "__main__":
+    priseEuro = PriseEuropeenne()
+    adaptateur = Adaptateur(priseEuro)
+    appareil = AppareilAmericain()
+    appareil.utiliser(adaptateur)
+```
+</TabItem>
+</Tabs>
 ---
 
 ## Avantages et inconvénients
