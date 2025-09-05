@@ -16,29 +16,43 @@ description: Travail pratique 4
 
 Ce travail consiste à élaborer un guide d'utilisation des patrons de conception vus en
 cours. Votre livrable doit aider un développeur à choisir rapidement le bon
-patron et à l'appliquer correctement.
+patron et à l'appliquer correctement. Vous produirez un guide en deux parties.
 
-Vous produirez notamment :
+### Partie 1 : Problèmes et solutions
 
-- Un guide, **avec des exemples de code**, indiquant « Dans tel cas de figure, utiliser tel patron ».
-- Une analyse des similitudes, des différences et des risques de confusion
-  entre les patrons. Vous pouvez faire cette analyse dans une section distincte
-  du guide ou l'inclure pour chaque patron dans une sous-section.
-
-Couvrez tous les patrons vus en cours (voir la section Patrons de
-conception dans les notes de cours).
-
-:::warning
-
-Pour la première partie, votre guide doit être rédigé sous la forme "problème -> solution -> exemple de code".
-Il ne s'agit pas d'une liste exhaustive des patrons avec leur description, mais
-plutôt d'une liste de problèmes courants rencontrés en développement et des
-patrons qui peuvent aider à les résoudre.
+Pour cette partie, vous écrivez un guide sous la forme "problème -> solution ->
+exemple de code". Il ne s'agit pas d'une liste exhaustive des patrons avec leur
+description, mais plutôt d'une liste de problèmes courants rencontrés en
+développement et des patrons qui peuvent aider à les résoudre.
 
 Le site https://refactoring.guru/ est une bonne ressource pour vous aider à identifier
 les problèmes que chaque patron résout, ainsi que des exemples de code en Python.
 
-:::
+Vous n'avez pas expliquer en détails les patrons. Voici la liste des patrons à
+couvrir. C'est à dire que les problèmes que vous choisissez doivent
+nécessairement être résolus par un de ces patrons et chaque patron doit être
+utilisé au moins une fois.
+
+- Singleton
+- Observateur
+- Factory
+- Abstract Factory
+- Adaptateur
+- Décorateur
+- Façade
+- Composite
+- Strategy
+- State
+
+### Partie 2 : Similitudes, différences et risques de confusions
+
+Une analyse des similitudes, des différences et des risques de confusion entre
+certains patrons.  Voici la liste de couples/groupes à analyser.
+
+- Strategy vs State.
+- Décorateur vs Façade vs Adaptateur.
+- Composite vs Décorateur.
+- Factory vs Singleton.
 
 ## Livrables
 
@@ -50,18 +64,6 @@ Déposez une archive contenant :
    utiliser des liens entre les fichiers.
 2. Un court `README.md` listant le nom des deux coéquipiers.
 
-## Pour vous aider
-
-### Similitudes et différences entre les patrons
-
-Certains patrons se ressemblent ou sont souvent confondus. En voici une liste
-de couples/groupes à analyser. Vous pouvez en ajouter d'autres si vous le
-souhaitez.
-
-- Strategy vs State.
-- Décorateur vs Façade vs Adaptateur.
-- Composite vs Décorateur.
-- Factory vs Singleton.
 
 ## Remise
 
