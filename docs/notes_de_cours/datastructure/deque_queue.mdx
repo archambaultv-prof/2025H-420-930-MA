@@ -1,0 +1,159 @@
+---
+sidebar_position: 4
+sidebar_label: Deque, Queue
+description: Deque, Queue
+---
+
+# 📚 Deque, Queue
+
+## Introduction
+
+Les **deque** (double-ended queue) et **queue** sont des structures de données
+linéaires qui permettent d'ajouter et de retirer des éléments de manière
+efficace.
+
+- **Queue** : Structure FIFO (First In, First Out) - premier entré, premier
+  sorti
+- **Deque** : Permet l'ajout et la suppression aux deux extrémités
+
+## Queue (File d'attente)
+
+### Import et création
+```python
+from queue import Queue
+
+# Créer une queue vide
+ma_queue = Queue()
+
+# Créer une queue avec une taille maximale
+ma_queue_limitee = Queue(maxsize=5)
+```
+
+### Méthodes principales
+
+#### `put()` - Ajouter un élément
+```python
+ma_queue = Queue()
+ma_queue.put("premier")
+ma_queue.put("deuxième")
+ma_queue.put("troisième")
+```
+
+#### `get()` - Retirer un élément
+```python
+# Retire et retourne le premier élément (FIFO)
+element = ma_queue.get()
+print(element)  # "premier"
+
+element = ma_queue.get()
+print(element)  # "deuxième"
+```
+
+### Exemple complet - Queue
+```python
+from queue import Queue
+
+# Simulation d'une file d'attente de clients
+file_clients = Queue()
+
+# Ajouter des clients
+file_clients.put("Alice")
+file_clients.put("Bob")
+file_clients.put("Charlie")
+
+# Servir les clients (FIFO)
+while not file_clients.empty():
+    client = file_clients.get()
+    print(f"Service pour: {client}")
+
+# Sortie:
+# Service pour: Alice
+# Service pour: Bob
+# Service pour: Charlie
+```
+
+## Deque (Double-ended Queue)
+
+### Import et création
+```python
+from collections import deque
+
+# Créer une deque vide
+ma_deque = deque()
+
+# Créer une deque avec des éléments initiaux
+ma_deque = deque([1, 2, 3])
+
+# Créer une deque avec une taille maximale
+ma_deque_limitee = deque(maxlen=5)
+```
+
+### Méthodes principales
+
+#### `append()` - Ajouter à droite
+```python
+ma_deque = deque([1, 2, 3])
+ma_deque.append(4)
+print(ma_deque)  # deque([1, 2, 3, 4])
+```
+
+#### `appendleft()` - Ajouter à gauche
+```python
+ma_deque = deque([1, 2, 3])
+ma_deque.appendleft(0)
+print(ma_deque)  # deque([0, 1, 2, 3])
+```
+
+#### `pop()` - Retirer de la droite
+```python
+ma_deque = deque([1, 2, 3, 4])
+element = ma_deque.pop()
+print(element)    # 4
+print(ma_deque)   # deque([1, 2, 3])
+```
+
+#### `popleft()` - Retirer de la gauche
+```python
+ma_deque = deque([1, 2, 3, 4])
+element = ma_deque.popleft()
+print(element)    # 1
+print(ma_deque)   # deque([2, 3, 4])
+```
+
+### Exemple complet - Deque
+```python
+from collections import deque
+
+# Simulation d'un buffer circulaire
+buffer = deque(maxlen=3)
+
+# Ajouter des éléments
+buffer.append("A")
+buffer.append("B")
+buffer.append("C")
+print(buffer)  # deque(['A', 'B', 'C'], maxlen=3)
+
+# Ajouter un 4e élément (le premier est automatiquement retiré)
+buffer.append("D")
+print(buffer)  # deque(['B', 'C', 'D'], maxlen=3)
+
+# Utilisation comme pile (LIFO) - ajout/retrait à droite
+pile = deque()
+pile.append(1)
+pile.append(2)
+pile.append(3)
+print(pile.pop())  # 3 (dernier entré, premier sorti)
+
+# Utilisation comme file (FIFO) - ajout à droite, retrait à gauche
+file = deque()
+file.append("premier")
+file.append("deuxième")
+print(file.popleft())  # "premier" (premier entré, premier sorti)
+```
+
+## Performances
+
+| Opération | Queue | Deque |
+|-----------|--------|-------|
+| Ajouter | `put()` - O(1) | `append()` / `appendleft()` - O(1) |
+| Retirer | `get()` - O(1) | `pop()` / `popleft()` - O(1) |
